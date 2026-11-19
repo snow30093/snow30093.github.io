@@ -1,0 +1,4 @@
+本遊戲內附字型：Noto Sans TC（已固定為 Medium 粗細，並只保留常用字）
+© 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+授權全文：https://openfontlicense.org/open-font-license-official-text/

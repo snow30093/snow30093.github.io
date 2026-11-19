@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050608">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="星砂倖存者">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>星砂倖存者</title>
+<style>
+  :root { --accent:#d8442c; --ink:#efe6d8; --mute:#a59d90; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; height:100%; background:#050608; color:var(--ink); overflow:hidden; overscroll-behavior:none; touch-action:none; -webkit-user-select:none; user-select:none;
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; }
+  #game { position:fixed; top:env(safe-area-inset-top); bottom:env(safe-area-inset-bottom); left:env(safe-area-inset-left); right:env(safe-area-inset-right); }
+  canvas { display:block; width:100%; height:100%; outline:none; touch-action:none; }
+  #load { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:0 24px max(7vh,28px); text-align:center;
+    background:linear-gradient(180deg,rgba(5,6,8,.25),rgba(5,6,8,.2) 45%,rgba(5,6,8,.94) 88%),url(bg.jpg) center/cover no-repeat #050608; transition:opacity .45s; }
+  #load.done { opacity:0; pointer-events:none; }
+  h1 { margin:0; font-size:clamp(34px,7vmin,68px); letter-spacing:.08em; color:#f0503a; text-shadow:0 3px 14px #000; }
+  #sub { margin:6px 0 clamp(14px,4vh,30px); font-size:clamp(13px,2.4vmin,18px); color:var(--ink); text-shadow:0 1px 6px #000; }
+  #track { width:min(520px,82vw); height:6px; background:rgba(255,255,255,.16); border-radius:3px; overflow:hidden; }
+  #bar { width:0; height:100%; background:var(--accent); transition:width .2s; }
+  #state { margin-top:10px; font-size:14px; color:var(--mute); min-height:1.4em; font-variant-numeric:tabular-nums; }
+  #note { margin-top:2px; font-size:12px; color:#7f786e; }
+  #err { display:none; max-width:560px; margin-top:12px; color:#ff9a86; font-size:14px; line-height:1.6; }
+  #rotate { position:fixed; inset:0; z-index:5; display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#07080b; font-size:18px; }
+  #rotate i { width:52px; height:88px; border:3px solid var(--ink); border-radius:9px; animation:turn 2s ease-in-out infinite; }
+  @keyframes turn { 0%,25%{transform:rotate(0)} 60%,100%{transform:rotate(90deg)} }
+  @media (prefers-reduced-motion:reduce) { #rotate i { animation:none; transform:rotate(90deg); } #bar { transition:none; } #load { transition:none; } }
+  @media (orientation:portrait) { body.phone #rotate { display:flex; } }
+  #fs { position:fixed; z-index:4; left:calc(env(safe-area-inset-left) + 10px); bottom:calc(env(safe-area-inset-bottom) + 10px); display:none; align-items:center; gap:6px; height:36px; padding:0 12px;
+    font:inherit; font-size:13px; color:var(--ink); background:rgba(8,9,12,.62); border:1px solid rgba(239,230,216,.28); border-radius:18px; cursor:pointer; touch-action:manipulation; }
+  #fs svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.2; }
+  body.phone.ready.canfs #fs { display:inline-flex; }
+  #a2hs { position:fixed; z-index:6; left:50%; bottom:calc(env(safe-area-inset-bottom) + 12px); width:min(460px,calc(100vw - 24px)); transform:translateX(-50%); display:none;
+    padding:14px 16px 12px; background:rgba(14,15,19,.96); border:1px solid rgba(239,230,216,.22); border-radius:12px; font-size:14px; line-height:1.6; box-shadow:0 8px 28px rgba(0,0,0,.5); }
+  #a2hs.show { display:block; }
+  #a2hs b { display:block; margin-bottom:2px; font-size:15px; }
+  #a2hs .share { display:inline-block; width:16px; height:16px; margin:0 2px; vertical-align:-3px; fill:none; stroke:#5aa9ff; stroke-width:2; }
+  #a2hs .row { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }
+  #a2hs button { min-height:36px; padding:0 14px; font:inherit; font-size:13.5px; color:var(--ink); background:rgba(255,255,255,.08); border:0; border-radius:8px; }
+  #a2hs button.ok { background:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+<div id="game"><canvas id="c" tabindex="-1"></canvas></div>
+<div id="load">
+  <h1>星砂倖存者</h1>
+  <div id="sub">世界淪陷之後，這裡是最後的堡壘</div>
+  <div id="track"><div id="bar"></div></div>
+  <div id="state" role="status">準備中…</div>
+  <div id="note">第一次載入需要下載資料，之後會快很多</div>
+  <div id="err" role="alert"></div>
+</div>
+<div id="rotate"><i></i>請將手機轉為橫向遊玩</div>
+<div id="a2hs" role="dialog" aria-labelledby="a2hs-t">
+  <b id="a2hs-t">用全螢幕玩得更順手</b>
+  點 Safari 的分享按鈕<svg class="share" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11v9h12v-9"/></svg>，選「加入主畫面」，之後從主畫面的「星砂倖存者」圖示開啟，就能滿版遊玩。
+  <div class="row"><button type="button" id="a2hs-never">不再提示</button><button type="button" class="ok" id="a2hs-ok">知道了</button></div>
+</div>
+<button id="fs" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="fsi" d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><span id="fst">全螢幕</span></button>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), $ = function (id) { return document.getElementById(id); };
+  var phone = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var canvas = $('c'), gl = canvas.getContext ? document.createElement('canvas').getContext('webgl2') : null;
+  var kind = q.get('build') || (phone ? 'mobile' : 'desktop');
+  if (phone) document.body.classList.add('phone');
+  function fail(msg) { $('state').textContent = '無法啟動遊戲'; $('note').style.display = 'none'; var e = $('err'); e.style.display = 'block'; e.textContent = msg; }
+  if (!gl) { fail('這個瀏覽器不支援 WebGL 2。請更新瀏覽器，或改用最新版 Chrome、Edge、Safari。'); return; }
+  var base = kind + '/Build/' + kind, s = document.createElement('script');
+  s.src = base + '.loader.js';
+  s.onerror = function () { fail('遊戲檔案載入失敗，請確認網路後重新整理。'); };
+  s.onload = function () {
+    createUnityInstance(canvas, {
+      dataUrl: base + '.data.unityweb', frameworkUrl: base + '.framework.js.unityweb', codeUrl: base + '.wasm.unityweb',
+      streamingAssetsUrl: kind + '/StreamingAssets', companyName: 'Starsand', productName: 'Starsand Survivors', productVersion: '1.0',
+      devicePixelRatio: phone ? Math.min(window.devicePixelRatio || 1, 2) : Math.min(window.devicePixelRatio || 1, 1.5),
+      autoSyncPersistentDataPath: true, matchWebGLToCanvasSize: true
+    }, function (p) {
+      var pct = Math.round(p * 100); $('bar').style.width = pct + '%';
+      $('state').textContent = p < .9 ? '下載遊戲資料 ' + Math.round(p / .9 * 100) + '%' : '解壓縮並啟動中，請稍候…';
+    }).then(function (inst) {
+      window.unityInstance = inst; $('bar').style.width = '100%'; $('load').classList.add('done'); document.body.classList.add('ready'); showA2hs();
+      setTimeout(function () { $('load').style.display = 'none'; }, 600); canvas.focus();
+    }).catch(function (e) {
+      console.error(e); fail('遊戲啟動失敗，可能是裝置記憶體不足。請關閉其他分頁或 App 後重新整理。');
+    });
+  };
+  document.body.appendChild(s);
+  // iPhone 不支援網頁全螢幕：提示用「加入主畫面」，從主畫面圖示開啟就會滿版（已從主畫面開啟或選過「不再提示」就不顯示）
+  function showA2hs() {
+    var ios = /iPhone|iPod/.test(navigator.userAgent), standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches);
+    var never = false; try { never = localStorage.getItem('ss_a2hs') === 'never'; } catch (e) {}
+    if (!ios || standalone || never) return;
+    var box = $('a2hs'); setTimeout(function () { box.classList.add('show'); }, 1500);
+    $('a2hs-ok').onclick = function () { box.classList.remove('show'); };
+    $('a2hs-never').onclick = function () { box.classList.remove('show'); try { localStorage.setItem('ss_a2hs', 'never'); } catch (e) {} };
+  }
+  // 手機全螢幕：瀏覽器規定要由觸控觸發，所以第一次觸碰畫面時自動進入；左下角按鈕可隨時離開或再進入（iPhone 的 Safari 不支援，按鈕不會出現）
+  var root = document.documentElement, fsBtn = $('fs');
+  var canFs = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+  function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement; }
+  function enterFs() {
+    try {
+      var r = root.requestFullscreen ? root.requestFullscreen({ navigationUI: 'hide' }) : root.webkitRequestFullscreen();
+      if (r && r.then) r.then(function () { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); }).catch(function () {});
+    } catch (e) {}
+  }
+  function exitFs() { try { var r = document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen(); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+  function syncFs() {
+    var on = !!fsEl(); $('fst').textContent = on ? '離開全螢幕' : '全螢幕'; fsBtn.setAttribute('aria-label', on ? '離開全螢幕' : '進入全螢幕');
+    $('fsi').setAttribute('d', on ? 'M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5' : 'M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5');
+  }
+  if (phone && canFs) {
+    document.body.classList.add('canfs');
+    document.addEventListener('touchend', function once(e) { if (e.target === fsBtn || fsBtn.contains(e.target)) return; document.removeEventListener('touchend', once); if (!fsEl()) enterFs(); });
+    fsBtn.addEventListener('click', function (e) { e.stopPropagation(); if (fsEl()) exitFs(); else enterFs(); });
+    document.addEventListener('fullscreenchange', syncFs); document.addEventListener('webkitfullscreenchange', syncFs); syncFs();
+  }
+})();
+</script>
+</body>
+</html>
