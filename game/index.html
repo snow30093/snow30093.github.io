@@ -33,9 +33,11 @@
   @keyframes turn { 0%,25%{transform:rotate(0)} 60%,100%{transform:rotate(90deg)} }
   @media (prefers-reduced-motion:reduce) { #rotate i { animation:none; transform:rotate(90deg); } #bar { transition:none; } #load { transition:none; } }
   @media (orientation:portrait) { body.phone #rotate { display:flex; } }
-  #fs { position:fixed; z-index:4; left:calc(env(safe-area-inset-left) + 10px); bottom:calc(env(safe-area-inset-bottom) + 10px); display:none; align-items:center; gap:6px; height:36px; padding:0 12px;
-    font:inherit; font-size:13px; color:var(--ink); background:rgba(8,9,12,.62); border:1px solid rgba(239,230,216,.28); border-radius:18px; cursor:pointer; touch-action:manipulation; }
-  #fs svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.2; }
+  /* 全螢幕切換：放在右側中央，避開左上狀態列、右上小地圖和底部按鈕列 */
+  #fs { position:fixed; z-index:4; right:calc(env(safe-area-inset-right) + 8px); top:50%; transform:translateY(-50%); display:none; align-items:center; justify-content:center; width:40px; height:40px; padding:0;
+    color:var(--ink); background:rgba(8,9,12,.55); border:1px solid rgba(239,230,216,.28); border-radius:50%; cursor:pointer; touch-action:manipulation; }
+  #fs svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; }
+  #fst { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   body.phone.ready.canfs #fs { display:inline-flex; }
   #a2hs { position:fixed; z-index:6; left:50%; bottom:calc(env(safe-area-inset-bottom) + 12px); width:min(460px,calc(100vw - 24px)); transform:translateX(-50%); display:none;
     padding:14px 16px 12px; background:rgba(14,15,19,.96); border:1px solid rgba(239,230,216,.22); border-radius:12px; font-size:14px; line-height:1.6; box-shadow:0 8px 28px rgba(0,0,0,.5); }
@@ -80,7 +82,7 @@
     createUnityInstance(canvas, {
       dataUrl: base + '.data.unityweb', frameworkUrl: base + '.framework.js.unityweb', codeUrl: base + '.wasm.unityweb',
       streamingAssetsUrl: kind + '/StreamingAssets', companyName: 'Starsand', productName: 'Starsand Survivors', productVersion: '1.0',
-      devicePixelRatio: phone ? Math.min(window.devicePixelRatio || 1, 2) : Math.min(window.devicePixelRatio || 1, 1.5),
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, phone ? 3 : 2),   // 用螢幕原生解析度，文字才清晰；3D 場景另由遊戲自動調整解析度
       autoSyncPersistentDataPath: true, matchWebGLToCanvasSize: true
     }, function (p) {
       var pct = Math.round(p * 100); $('bar').style.width = pct + '%';
