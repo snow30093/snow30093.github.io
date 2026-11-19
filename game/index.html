@@ -75,12 +75,17 @@
   if (phone) document.body.classList.add('phone');
   function fail(msg) { $('state').textContent = '無法啟動遊戲'; $('note').style.display = 'none'; var e = $('err'); e.style.display = 'block'; e.textContent = msg; }
   if (!gl) { fail('這個瀏覽器不支援 WebGL 2。請更新瀏覽器，或改用最新版 Chrome、Edge、Safari。'); return; }
-  var base = kind + '/Build/' + kind, s = document.createElement('script');
-  s.src = base + '.loader.js';
+  // build.json 記錄這次建置的檔名（含內容雜湊）。加時間參數並停用快取，確保每次都拿到最新清單，不會新舊檔案混用
+  fetch(kind + '/build.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+    if (!r.ok) throw new Error('build.json ' + r.status); return r.json();
+  }).then(start).catch(function (e) { console.error(e); fail('遊戲檔案載入失敗，請確認網路後重新整理。'); });
+  function start(b) {
+  var s = document.createElement('script');
+  s.src = kind + '/' + b.loader;
   s.onerror = function () { fail('遊戲檔案載入失敗，請確認網路後重新整理。'); };
   s.onload = function () {
     createUnityInstance(canvas, {
-      dataUrl: base + '.data.unityweb', frameworkUrl: base + '.framework.js.unityweb', codeUrl: base + '.wasm.unityweb',
+      dataUrl: kind + '/' + b.data, frameworkUrl: kind + '/' + b.framework, codeUrl: kind + '/' + b.code,
       streamingAssetsUrl: kind + '/StreamingAssets', companyName: 'Starsand', productName: 'Starsand Survivors', productVersion: '1.0',
       devicePixelRatio: Math.min(window.devicePixelRatio || 1, phone ? 3 : 2),   // 用螢幕原生解析度，文字才清晰；3D 場景另由遊戲自動調整解析度
       autoSyncPersistentDataPath: true, matchWebGLToCanvasSize: true
@@ -95,6 +100,7 @@
     });
   };
   document.body.appendChild(s);
+  }
   // iPhone 不支援網頁全螢幕：提示用「加入主畫面」，從主畫面圖示開啟就會滿版（已從主畫面開啟或選過「不再提示」就不顯示）
   function showA2hs() {
     var ios = /iPhone|iPod/.test(navigator.userAgent), standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches);
