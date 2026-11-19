@@ -1,6 +1,6 @@
 {
-  "loader": "Build/desktop.4c7272e079.loader.js",
-  "data": "Build/desktop.11675b0f3a.data.unityweb",
-  "framework": "Build/desktop.3fa7be6e8c.framework.js.unityweb",
-  "code": "Build/desktop.cfc416890c.wasm.unityweb"
+  "loader": "Build/desktop.ef7379229e.loader.js",
+  "data": "Build/desktop.add7069749.data.unityweb",
+  "framework": "Build/desktop.7b2f349f70.framework.js.unityweb",
+  "code": "Build/desktop.babf583961.wasm.unityweb"
 }

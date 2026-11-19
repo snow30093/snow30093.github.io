@@ -1,6 +1,6 @@
 {
-  "loader": "Build/mobile.4c7272e079.loader.js",
-  "data": "Build/mobile.77e45f2662.data.unityweb",
-  "framework": "Build/mobile.309b4ec7ea.framework.js.unityweb",
-  "code": "Build/mobile.6bb144fa67.wasm.unityweb"
+  "loader": "Build/mobile.ef7379229e.loader.js",
+  "data": "Build/mobile.1706659572.data.unityweb",
+  "framework": "Build/mobile.eb5987ca2e.framework.js.unityweb",
+  "code": "Build/mobile.fb9e2a8f3e.wasm.unityweb"
 }
