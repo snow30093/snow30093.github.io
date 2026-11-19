@@ -30,6 +30,7 @@
   .card.main { border-color:rgba(228,85,58,.72); }
   .card h3 { display:flex; align-items:center; gap:10px; margin:0 0 4px; font-size:21px; line-height:1.35; }
   .card p { margin:0; color:var(--mute); font-size:14.5px; line-height:1.6; }
+  .card p.note { margin-top:6px; font-size:13px; color:#8f877b; }
   .tag { padding:1px 8px; border-radius:4px; font-size:12px; font-weight:700; letter-spacing:.06em; color:#14100b; background:var(--accent2); }
   .card.main .tag { color:#fff; background:var(--accent); }
   .card svg { position:absolute; right:20px; top:50%; width:20px; height:20px; margin-top:-10px; color:var(--accent2); }
@@ -77,7 +78,7 @@
       <li><b>42</b><span>種怪物</span></li>
       <li><b>8</b><span>首中文配樂</span></li>
     </ul>
-    <p class="how">電腦：WASD 或方向鍵移動，滾輪縮放，Esc 暫停<br>手機：橫向遊玩，按住畫面拖曳移動，雙指縮放</p>
+    <p class="how">電腦：WASD 或方向鍵移動，滾輪縮放，Esc 暫停<br>手機：橫向遊玩，按住畫面拖曳移動，雙指縮放<br>換裝置接著玩：在「轉移存檔」匯出代碼，到另一個版本或裝置匯入</p>
   </section>
   <nav class="play" aria-label="開始遊玩">
     <h2>選擇版本</h2>
@@ -85,6 +86,12 @@
       <h3>Unity 3D 版 <span class="tag">完整版</span></h3>
       <p>以 Unity 引擎開發，寫實 3D 場景與怪物。第一次進入需要下載遊戲資料，請使用穩定的網路。</p>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="card" href="https://github.com/snow30093/snow30093.github.io/releases/latest/download/StarsandSurvivors-PC.zip">
+      <h3>電腦版 <span class="tag">極致畫質</span></h3>
+      <p>Windows 10／11 64 位元。泛光、即時陰影、4x 抗鋸齒，可調解析度與幀數。下載約 366 MB，解壓縮後執行 StarsandSurvivors.exe。</p>
+      <p class="note">若出現「Windows 已保護您的電腦」，點「其他資訊」→「仍要執行」。</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
     </a>
     <a class="card" href="demo/">
       <h3>早期網頁版 <span class="tag">DEMO</span></h3>
