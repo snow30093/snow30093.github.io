@@ -63,11 +63,13 @@
     }
 
     .nav {
-      height: 64px;
+      min-height: 62px;
+      padding: 10px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 10px 16px;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -77,21 +79,33 @@
       font-weight: 700;
       font-size: 1.05rem;
       letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
     .brand-dot {
-      width: 10px; height: 10px; border-radius: 50%;
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
       background: linear-gradient(135deg, var(--game-accent), var(--app-accent));
       box-shadow: 0 0 12px rgba(228, 0, 127, 0.65);
     }
 
-    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
 
     .nav-link {
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.2s, color 0.2s;
     }
 
@@ -140,7 +154,16 @@
 
     @media (max-width: 820px) {
       .grid { grid-template-columns: 1fr; }
-      .hero { padding: 44px 0 28px; }
+      .hero { padding: 40px 0 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 16px; }
+      .nav { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 0; }
+      .nav-links { width: 100%; }
+      .card { padding: 22px 18px; }
+      .actions { flex-direction: column; }
+      .actions .btn { width: 100%; flex: none; }
     }
 
     .card {
