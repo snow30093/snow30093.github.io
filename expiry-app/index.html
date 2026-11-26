@@ -558,7 +558,7 @@
         <div class="meta-grid">
           <div class="meta-item">
             <span>目前版本</span>
-            <strong>v1.0.0（arm64-v8a）</strong>
+            <strong>v1.0.1（arm64-v8a）</strong>
           </div>
           <div class="meta-item">
             <span>檔案大小</span>
@@ -573,7 +573,7 @@
         <div class="sha-row">
           <div>
             <strong>SHA-256：</strong>
-            <span class="sha-text" id="shaValue">7CD417717F82E9CB8673170B74C8DA5029629E2F5FE9C733377E4323C560FA53</span>
+            <span class="sha-text" id="shaValue">63E538DBBBD104F594DDFC3B03F984ECC72A04CE56CE33944C3878CA920BD37D</span>
           </div>
           <button class="copy-btn" type="button" id="copyShaBtn">複製雜湊</button>
         </div>
@@ -810,7 +810,7 @@
           <div class="guide-body">
             <ul>
               <li><strong>支援格式</strong>：匯入支援 <code>.xlsx</code>、<code>.xls</code>（Excel 97–2003）、<code>.csv</code>（自動辨識 UTF-8 與 Big5）；匯出支援 <code>.xlsx</code>（推薦）與 <code>.csv</code>（檔名預設為 <code>效期資料_日期.xlsx</code>）。</li>
-              <li><strong>必要欄位名稱</strong>（第一列或 Excel 前 10 列內，順序不限）：<code>國碼</code>（舊檔寫 <code>條碼</code> 也可）、<code>部門</code>、<code>店內碼</code>、<code>品名</code>、<code>有效日期</code>（填 <code>0</code> 或空白表示待登錄）。</li>
+              <li><strong>必要欄位名稱</strong>（第一列或 Excel 前 10 列內，順序不限）：<code>國碼</code>（舊檔寫 <code>條碼</code> 也可）、<code>部門</code>、<code>店內碼</code>、<code>品名</code>、<code>到期日期</code>（填 <code>0</code> 或空白表示待登錄）。</li>
               <li><strong>匯入不覆蓋已登錄日期</strong>：重新匯入最新商品檔時，已有登錄到期日的商品會保留原日期，僅更新品名、部門與店內碼；匯出的檔案也可直接匯入另一支手機換機交接。</li>
             </ul>
             <div class="tip-box">
@@ -867,7 +867,7 @@
             </tr>
             <tr>
               <td>匯入中止「缺少欄位」</td>
-              <td>標題列缺少部門、品名、國碼、店內碼或有效日期</td>
+              <td>標題列缺少部門、品名、國碼、店內碼或到期日期</td>
               <td>補齊缺少的欄位名稱後再匯入</td>
             </tr>
             <tr>
