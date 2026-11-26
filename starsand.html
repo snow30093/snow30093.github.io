@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090c">
+<meta name="description" content="星砂倖存者：在淪陷的世界裡撐過屍潮、擊倒頭目，回到最後的避難所變得更強。">
+<title>星砂倖存者</title>
+<style>
+  :root { --bg:#08090c; --panel:rgba(14,15,19,.82); --line:rgba(239,230,216,.16); --ink:#f1e9dc; --mute:#b5ac9e; --accent:#e4553a; --accent2:#f0a24a; --bar:76px; }
+  * { box-sizing:border-box; }
+  html { background:var(--bg); -webkit-text-size-adjust:100%; }
+  body { margin:0; min-height:100vh; min-height:100dvh; color:var(--ink); font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif; line-height:1.7; }
+  body::before { content:""; position:fixed; inset:0; z-index:-2; background:url(assets/bg.jpg) center 35%/cover no-repeat; }
+  body::after { content:""; position:fixed; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(6,7,10,.93) 0,rgba(6,7,10,.76) 52%,rgba(6,7,10,.58) 100%),linear-gradient(0deg,rgba(6,7,10,.9),transparent 42%); }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--accent2); outline-offset:3px; }
+  main { width:min(1180px,100%); min-height:calc(100dvh - var(--bar)); margin:0 auto; padding:clamp(28px,6vh,64px) clamp(20px,4vw,48px) calc(var(--bar) + 28px); display:grid; grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:clamp(32px,6vw,84px); align-items:center; }
+  .eyebrow { margin:0 0 8px; color:var(--accent2); font-size:14px; letter-spacing:.14em; }
+  h1 { margin:0; font-size:clamp(44px,7vw,82px); line-height:1.1; letter-spacing:.04em; text-shadow:0 3px 22px #000; }
+  .lead { margin:16px 0 0; max-width:34em; font-size:clamp(17px,1.7vw,20px); }
+  .intro p { max-width:37em; color:#ddd4c6; }
+  .facts { list-style:none; display:flex; flex-wrap:wrap; gap:10px 28px; margin:26px 0; padding:0; }
+  .facts b { display:block; font-size:30px; line-height:1.15; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .facts span { color:var(--mute); font-size:14px; }
+  .how { margin:0; padding:14px 0 0; border-top:1px solid var(--line); color:var(--mute); font-size:15px; }
+  .play h2 { margin:0 0 14px; font-size:20px; }
+  .card { position:relative; display:block; padding:20px 54px 20px 22px; margin-bottom:14px; text-decoration:none; background:var(--panel); border:1px solid var(--line); border-radius:10px; transition:border-color .16s,transform .16s,background .16s; }
+  .card:hover { border-color:var(--accent2); background:rgba(24,22,22,.92); transform:translateY(-2px); }
+  .card.main { border-color:rgba(228,85,58,.72); }
+  .card h3 { display:flex; align-items:center; gap:10px; margin:0 0 4px; font-size:21px; line-height:1.35; }
+  .card p { margin:0; color:var(--mute); font-size:14.5px; line-height:1.6; }
+  .card p.note { margin-top:6px; font-size:13px; color:#8f877b; }
+  .tag { padding:1px 8px; border-radius:4px; font-size:12px; font-weight:700; letter-spacing:.06em; color:#14100b; background:var(--accent2); }
+  .card.main .tag { color:#fff; background:var(--accent); }
+  .card svg { position:absolute; right:20px; top:50%; width:20px; height:20px; margin-top:-10px; color:var(--accent2); }
+  /* 播放器 */
+  .player { position:fixed; left:0; right:0; bottom:0; z-index:10; display:grid; grid-template-columns:auto minmax(150px,240px) minmax(120px,1fr) auto; gap:18px; align-items:center; height:var(--bar); padding:0 max(18px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(18px,env(safe-area-inset-left)); background:rgba(10,11,14,.96); border-top:1px solid var(--line); }
+  .ctl,.side { display:flex; align-items:center; gap:4px; }
+  button { display:inline-grid; place-items:center; width:44px; height:44px; padding:0; color:var(--ink); background:none; border:0; border-radius:8px; cursor:pointer; }
+  button:hover { background:rgba(255,255,255,.08); }
+  button svg { width:21px; height:21px; fill:currentColor; }
+  #play { width:48px; height:48px; color:#fff; background:var(--accent); border-radius:50%; }
+  #play:hover { background:#f0674b; }
+  .now { min-width:0; line-height:1.35; }
+  .now b,.now span { display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .now b { font-size:15px; } .now span { color:var(--mute); font-size:12.5px; }
+  .seek { display:flex; align-items:center; gap:10px; min-width:0; color:var(--mute); font-size:12.5px; font-variant-numeric:tabular-nums; }
+  input[type=range] { flex:1; min-width:0; width:100%; height:24px; margin:0; accent-color:var(--accent); cursor:pointer; background:none; }
+  #vol { width:92px; flex:none; }
+  #list { position:fixed; right:max(14px,env(safe-area-inset-right)); bottom:calc(var(--bar) + 10px); z-index:11; width:min(320px,calc(100vw - 28px)); max-height:calc(100dvh - var(--bar) - 28px); overflow:auto; margin:0; padding:6px; list-style:none; background:#111217; border:1px solid var(--line); border-radius:10px; }
+  #list[hidden] { display:none; }
+  #list button { display:flex; justify-content:space-between; gap:12px; width:100%; height:auto; min-height:44px; padding:7px 10px; text-align:left; font:inherit; font-size:14.5px; }
+  #list small { color:var(--mute); white-space:nowrap; }
+  #list [aria-current=true] { color:var(--accent2); }
+  #hint { position:fixed; left:50%; bottom:calc(var(--bar) + 12px); z-index:9; width:max-content; max-width:calc(100vw - 28px); padding:6px 14px; font-size:13.5px; color:#14100b; background:var(--accent2); border-radius:6px; transform:translateX(-50%); }
+  #hint[hidden] { display:none; }
+  @media (max-width:860px) {
+    :root { --bar:112px; }
+    body::after { background:linear-gradient(180deg,rgba(6,7,10,.78),rgba(6,7,10,.9)); }
+    main { grid-template-columns:1fr; align-items:start; gap:30px; padding-top:32px; }
+    .player { grid-template-columns:auto minmax(0,1fr) auto; grid-template-rows:60px 36px; gap:0 10px; align-content:start; padding-top:4px; }
+    .seek { grid-column:1/-1; grid-row:2; } #vol,#mute { display:none; } #prev { display:none; }
+  }
+  @media (prefers-reduced-motion:reduce) { .card { transition:none; } .card:hover { transform:none; } }
+</style>
+</head>
+<body>
+<main>
+  <section class="intro">
+    <p class="eyebrow">末日生存動作遊戲</p>
+    <h1>星砂倖存者</h1>
+    <p class="lead">世界淪陷之後，這裡是最後的堡壘。</p>
+    <p>走進被屍潮吞沒的城鎮、下水道與墓園，角色會自動攻擊，你要做的是走位、撿拾結晶、挑選技能，撐過 8 分鐘並擊倒頭目。帶著戰利品回到避難所，強化裝備與天賦，再走向更危險的地方。</p>
+    <ul class="facts">
+      <li><b>3</b><span>種職業</span></li>
+      <li><b>6</b><span>張地圖</span></li>
+      <li><b>42</b><span>種怪物</span></li>
+      <li><b>8</b><span>首中文配樂</span></li>
+    </ul>
+    <p class="how">電腦：WASD 或方向鍵移動，滾輪縮放，Esc 暫停<br>手機：橫向遊玩，按住畫面拖曳移動，雙指縮放<br>換裝置接著玩：在「轉移存檔」匯出代碼，到另一個版本或裝置匯入</p>
+  </section>
+  <nav class="play" aria-label="開始遊玩">
+    <h2>選擇版本</h2>
+    <a class="card main" href="game/">
+      <h3>全裝置通用版 <span class="tag">完整版</span></h3>
+      <p>以 Unity 引擎開發，瀏覽器直接玩，電腦、手機、平板都適用，寫實 3D 場景與怪物。第一次進入需要下載遊戲資料，請使用穩定的網路。</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+    <a class="card" href="https://github.com/snow30093/snow30093.github.io/releases/latest/download/StarsandSurvivors-PC.zip">
+      <h3>電腦版 <span class="tag">極致畫質</span></h3>
+      <p>Windows 10／11 64 位元。泛光、即時陰影、4x 抗鋸齒，可調解析度與幀數。下載約 366 MB，解壓縮後執行 StarsandSurvivors.exe。</p>
+      <p class="note">若出現「Windows 已保護您的電腦」，點「其他資訊」→「仍要執行」。</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+    </a>
+    <a class="card" href="demo/">
+      <h3>早期網頁版 <span class="tag">DEMO</span></h3>
+      <p>本作最早開發的版本，檔案輕巧，開啟就能玩。</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </nav>
+</main>
+
+<div id="hint" hidden>點一下頁面即可播放音樂</div>
+<ol id="list" hidden aria-label="播放清單"></ol>
+<section class="player" aria-label="音樂播放器">
+  <div class="ctl">
+    <button id="prev" aria-label="上一首"><svg viewBox="0 0 24 24"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+    <button id="play" aria-label="播放"><svg viewBox="0 0 24 24"><path id="pi" d="M8 5v14l11-7z"/></svg></button>
+    <button id="next" aria-label="下一首"><svg viewBox="0 0 24 24"><path d="M15.6 5H18v14h-2.4zM4 5v14l10.5-7z"/></svg></button>
+  </div>
+  <div class="now" aria-live="polite"><b id="tt"></b><span id="ts"></span></div>
+  <div class="seek"><span id="cur">0:00</span><input id="bar" type="range" min="0" max="1000" value="0" aria-label="播放進度"><span id="dur">0:00</span></div>
+  <div class="side">
+    <button id="mute" aria-label="靜音"><svg viewBox="0 0 24 24"><path id="vi" d="M4 9v6h4l5 4V5L8 9zm12 .2v5.6a3.5 3.5 0 0 0 0-5.6z"/></svg></button>
+    <input id="vol" type="range" min="0" max="100" aria-label="音量">
+    <button id="more" aria-label="播放清單" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg></button>
+  </div>
+</section>
+<audio id="a" preload="metadata"></audio>
+<script>
+(function () {
+  var T = [['town','餘燼之家','避難所'],['meadow','空城','死寂小鎮'],['sewer','黑水之下','腐水下水道'],['bay','空宅圓舞曲','荒廢洋館'],['forest','霧中安魂曲','黑森墓園'],['lava','無名實驗體','地下實驗室'],['temple','焚化之心','核心焚化爐'],['boss','死亡已在門前','頭目戰']];
+  var $ = function (i) { return document.getElementById(i); }, a = $('a'), bar = $('bar'), vol = $('vol'), list = $('list'), i = 0, seeking = false, muted = false, lastVol;
+  var PLAY = 'M8 5v14l11-7z', PAUSE = 'M7 5h4v14H7zm6 0h4v14h-4z', ON = 'M4 9v6h4l5 4V5L8 9zm12 .2v5.6a3.5 3.5 0 0 0 0-5.6z', OFF = 'M4 9v6h4l5 4V5L8 9zm11.3.7L17.6 12l-2.3 2.3 1.4 1.4 2.3-2.3 2.3 2.3 1.4-1.4-2.3-2.3 2.3-2.3-1.4-1.4-2.3 2.3-2.3-2.3z';
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function fmt(s) { if (!isFinite(s)) return '0:00'; s = Math.floor(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function setVol(v) { a.volume = v / 100; vol.value = v; muted = v === 0; $('vi').setAttribute('d', muted ? OFF : ON); $('mute').setAttribute('aria-label', muted ? '取消靜音' : '靜音'); store('ss_vol', String(v)); }
+  T.forEach(function (t, n) {
+    var li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.textContent = t[1];
+    var s = document.createElement('small'); s.textContent = t[2]; b.appendChild(s); b.onclick = function () { load(n, true); toggleList(false); }; li.appendChild(b); list.appendChild(li);
+  });
+  function load(n, go) {
+    i = (n + T.length) % T.length; var t = T[i]; a.src = 'music/' + t[0] + '.m4a'; $('tt').textContent = t[1]; $('ts').textContent = t[2] + '主題曲';
+    bar.value = 0; $('cur').textContent = '0:00'; $('dur').textContent = '0:00';
+    [].forEach.call(list.querySelectorAll('button'), function (b, k) { b.setAttribute('aria-current', k === i); });
+    if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: t[1], artist: '星砂倖存者', album: '遊戲配樂' });
+    if (go) start();
+  }
+  function start() { return a.play().then(function () { $('hint').hidden = true; disarm(); }).catch(function () { $('hint').hidden = false; arm(); }); }
+  function first(e) { if (e.target.closest && e.target.closest('.player,#list')) return; start(); }
+  function arm() { ['pointerdown', 'keydown'].forEach(function (n) { document.addEventListener(n, first); }); }
+  function disarm() { ['pointerdown', 'keydown'].forEach(function (n) { document.removeEventListener(n, first); }); }
+  function toggleList(on) { list.hidden = !on; $('more').setAttribute('aria-expanded', on); }
+  $('play').onclick = function () { if (a.paused) start(); else { a.pause(); disarm(); $('hint').hidden = true; } };
+  $('prev').onclick = function () { if (a.currentTime > 3) a.currentTime = 0; else load(i - 1, true); };
+  $('next').onclick = function () { load(i + 1, true); };
+  $('more').onclick = function () { toggleList(list.hidden); };
+  $('mute').onclick = function () { if (muted) setVol(lastVol || 45); else { lastVol = +vol.value; setVol(0); } };
+  vol.oninput = function () { setVol(+vol.value); };
+  bar.oninput = function () { seeking = true; if (a.duration) $('cur').textContent = fmt(bar.value / 1000 * a.duration); };
+  bar.onchange = function () { if (a.duration) a.currentTime = bar.value / 1000 * a.duration; seeking = false; };
+  a.onplay = function () { $('pi').setAttribute('d', PAUSE); $('play').setAttribute('aria-label', '暫停'); };
+  a.onpause = function () { $('pi').setAttribute('d', PLAY); $('play').setAttribute('aria-label', '播放'); };
+  a.onloadedmetadata = function () { $('dur').textContent = fmt(a.duration); };
+  a.ontimeupdate = function () { if (seeking || !a.duration) return; bar.value = a.currentTime / a.duration * 1000; $('cur').textContent = fmt(a.currentTime); };
+  a.onended = function () { load(i + 1, true); };
+  a.onerror = function () { $('ts').textContent = '音樂載入失敗'; };
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') toggleList(false); });
+  document.addEventListener('pointerdown', function (e) { if (!list.hidden && !e.target.closest('#list,#more')) toggleList(false); });
+  if ('mediaSession' in navigator) { navigator.mediaSession.setActionHandler('previoustrack', function () { load(i - 1, true); }); navigator.mediaSession.setActionHandler('nexttrack', function () { load(i + 1, true); }); }
+  var sv = parseInt(store('ss_vol'), 10); setVol(isNaN(sv) ? 45 : sv); load(0, true);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>效期提醒 App — 使用說明與 APK 下載</title>
+  <meta name="description" content="效期提醒 Android App（Flutter）：掃描一維條碼登錄商品到期日、自動到期推播提醒、支援 Excel/CSV 匯入匯出，純本機離線運作。" />
+  <style>
+    :root {
+      --bg: #0c0d12;
+      --surface: #151823;
+      --surface-2: #1c2030;
+      --border: rgba(255, 255, 255, 0.09);
+      --text: #f3f4f8;
+      --muted: #a1a8bc;
+      --pink: #e4007f;
+      --pink-light: #ff5ab4;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #a855f7;
+      --gray: #94a3b8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(850px 460px at 50% -120px, rgba(228, 0, 127, 0.22), transparent 65%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #ffd1ea;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(12, 13, 18, 0.78);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-pill {
+      font-size: 0.86rem;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-pill:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 56px 0 36px;
+      text-align: center;
+    }
+
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(228, 0, 127, 0.16);
+      border: 1px solid rgba(228, 0, 127, 0.4);
+      color: #ff8bc9;
+      font-size: 0.83rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .hero .lead {
+      max-width: 650px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    /* Download Box */
+    .download-card {
+      background: linear-gradient(180deg, rgba(228, 0, 127, 0.12), rgba(21, 24, 35, 0.92));
+      border: 1px solid rgba(228, 0, 127, 0.38);
+      border-radius: 20px;
+      padding: 26px;
+      max-width: 720px;
+      margin: 0 auto 44px;
+      text-align: left;
+    }
+
+    .download-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .download-title h2 {
+      font-size: 1.28rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .download-title p {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .download-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink), #b80066);
+      color: #fff;
+      box-shadow: 0 10px 26px -10px rgba(228, 0, 127, 0.8);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 640px) {
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .meta-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .sha-row {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .sha-text {
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #d6dbea;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* Section Layout */
+    section.block {
+      padding: 28px 0;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 5px;
+      height: 22px;
+      border-radius: 4px;
+      background: var(--pink);
+    }
+
+    /* Feature cards */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    /* Status legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .step-num {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(228, 0, 127, 0.2);
+      color: #ff8bc9;
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Guide Accordion */
+    .guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    details.guide-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    details.guide-item[open] {
+      border-color: rgba(228, 0, 127, 0.35);
+    }
+
+    details.guide-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+    }
+
+    details.guide-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.guide-item summary::after {
+      content: "+";
+      font-size: 1.25rem;
+      color: var(--pink-light);
+      transition: transform 0.2s ease;
+    }
+
+    details.guide-item[open] summary::after {
+      content: "−";
+    }
+
+    .guide-body {
+      padding: 0 20px 18px;
+      color: #cfd5e3;
+      font-size: 0.93rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 14px;
+    }
+
+    .guide-body ul {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tip-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+      font-size: 0.88rem;
+    }
+
+    .privacy-card {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      border-radius: var(--radius);
+      padding: 20px;
+      font-size: 0.93rem;
+      color: #dcfce7;
+    }
+
+    .privacy-card ul {
+      margin-top: 10px;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      color: #bbf7d0;
+    }
+
+    footer {
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-inner a:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="back-link" href="../index.html">← 返回作品導覽</a>
+      <div class="nav-right">
+        <a class="nav-pill" href="#install">安裝步驟</a>
+        <a class="nav-pill" href="#guide">使用說明</a>
+        <a class="nav-pill" href="#privacy">隱私安全</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="app-badge">Android 離線工具 · 單手作業版</div>
+      <h1>效期提醒 App</h1>
+      <p class="lead">
+        掃描商品一維條碼即可快速登錄到期日，系統自動計算提醒日並於每日早上 9:00 推播彙總通知，支援 Excel / CSV 商品檔匯入與備份匯出。
+      </p>
+
+      <!-- Download Card -->
+      <div class="download-card" id="download">
+        <div class="download-head">
+          <div class="download-title">
+            <h2>下載 Android 安裝檔（APK）</h2>
+            <p>適用 Android 7.0（API 24）以上 64 位元裝置（arm64-v8a）</p>
+          </div>
+          <div class="download-actions">
+            <!-- 發布 GitHub Release 後，會自動指向最新版本 APK -->
+            <a class="btn btn-primary" href="https://github.com/snow30093/expiry_app/releases/latest/download/app-arm64-v8a-release.apk">
+              ⬇ 下載最新版 APK
+            </a>
+            <a class="btn btn-secondary" href="https://github.com/snow30093/expiry_app/releases" target="_blank" rel="noopener">
+              所有版本（Releases）
+            </a>
+          </div>
+        </div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span>目前版本</span>
+            <strong>v1.0.0（arm64-v8a）</strong>
+          </div>
+          <div class="meta-item">
+            <span>檔案大小</span>
+            <strong>約 25.2 MB</strong>
+          </div>
+          <div class="meta-item">
+            <span>網路需求</span>
+            <strong>完全離線運作</strong>
+          </div>
+        </div>
+
+        <div class="sha-row">
+          <div>
+            <strong>SHA-256：</strong>
+            <span class="sha-text" id="shaValue">7FBAB0934146F34B8AA249C4C0F593E095B2F6C8EC9B7801AB097C301560A735</span>
+          </div>
+          <button class="copy-btn" type="button" id="copyShaBtn">複製雜湊</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features -->
+    <section class="block">
+      <h2 class="section-title">核心特色</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>📷 專注一維商品條碼掃描</h3>
+          <p>僅辨識 EAN-13/8、UPC-A/E、Code 128/39/93、Codabar、ITF-14 等一維條碼，自動忽略包裝上的 QR Code 避免誤掃；同時比對國碼與店內碼（含自動相容遺失前導 0 的條碼）。</p>
+        </div>
+        <div class="feature-card">
+          <h3>✋ 單手操作與清晰狀態分類</h3>
+          <p>畫面底部配置全寬「掃描條碼」大按鈕，卡片左側大字顯示剩餘天數，長按或點右側「⋮」即可編輯、標記已處理或刪除。</p>
+          <div class="legend">
+            <span class="tag"><span class="dot" style="background: var(--red);"></span>即將過期</span>
+            <span class="tag"><span class="dot" style="background: var(--amber);"></span>待登錄</span>
+            <span class="tag"><span class="dot" style="background: var(--green);"></span>正常</span>
+            <span class="tag"><span class="dot" style="background: var(--purple);"></span>已過期</span>
+            <span class="tag"><span class="dot" style="background: var(--gray);"></span>已處理</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <h3>🔔 智慧到期排程提醒</h3>
+          <p>到期提醒日當天早上 9:00 發送一則彙總通知（例如「某商品 等 12 項商品進入即將過期」）；重開機後自動重新排程，不遺漏任何提醒。</p>
+        </div>
+        <div class="feature-card">
+          <h3>📊 Excel / CSV 雙向匯入匯出</h3>
+          <p>支援匯入 <code>.xlsx</code>、<code>.xls</code>、<code>.csv</code>（UTF-8 與 Big5 自動辨識），並可匯出 <code>.xlsx</code>（全部存成文字避免條碼變科學記號）或 <code>.csv</code> 供跨手機轉移。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install Steps -->
+    <section class="block" id="install">
+      <h2 class="section-title">Android 安裝步驟</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>下載 APK 檔案</h3>
+          <p>點擊上方「下載最新版 APK」按鈕，將 <code>app-arm64-v8a-release.apk</code> 下載至手機。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>允許安裝未知來源</h3>
+          <p>開啟下載好的 APK，若系統提示安全限制，請點選「設定」並開啟瀏覽器或檔案管理員的「允許安裝未知應用程式」。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>授予相機與通知權限</h3>
+          <p>首次開啟 App 時，請允許「相機」權限（用於掃描條碼）與「通知」權限（用於接收每日到期提醒）。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Usage Guide -->
+    <section class="block" id="guide">
+      <h2 class="section-title">完整使用說明</h2>
+      <div class="guide-list">
+        <details class="guide-item" open>
+          <summary>1. 效期計算與提醒通知規則</summary>
+          <div class="guide-body">
+            <ul>
+              <li><strong>一般部門</strong>：到期前 <strong>6 個月</strong>起標記為「即將過期」。</li>
+              <li><strong>短效期部門</strong>（例如 <code>A12</code> 等指定短效期分類）：剩餘天數<strong>不足 45 天</strong>（44 天以下）標記為「即將過期」。</li>
+              <li><strong>彙總推播</strong>：提醒日當天早上 <code>09:00</code> 發送一則彙總通知；若登錄當下已在提醒範圍內，會立即發送通知。</li>
+              <li><strong>排程保護</strong>：系統每次開啟或資料異動時自動重排接下來 60 個提醒日，避免超過 Android 單一 App 排程上限。</li>
+              <li><strong>單品覆蓋機制</strong>：同一商品僅保留最新一筆效期紀錄，再次掃描登錄時新日期會直接取代舊日期。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="guide-item">
+          <summary>2. 條碼掃描、搜尋與新增／編輯商品</summary>
+          <div class="guide-body">
+            <ul>
+              <li><strong>條碼比對順序</strong>：國碼完全相同 → 店內碼完全相同 → 國碼忽略前導 0 → 店內碼忽略前導 0；若多項商品共用同一店內碼，會跳出清單供選擇。</li>
+              <li><strong>新增未建檔商品</strong>：掃描到資料庫沒有的國碼時，會跳出視窗詢問是否新增並自動帶入國碼；按下取消後 3 秒內不重複跳出。</li>
+              <li><strong>編輯與日期輸入</strong>：長按卡片或點右側「⋮」→「編輯」可修改品名、部門、國碼、店內碼與到期日。到期日支援手動輸入 <code>2027/3/15</code>、<code>2027-03-15</code>、<code>20270315</code>、<code>116/3/15</code>（民國年），或使用月曆挑選。</li>
+              <li><strong>多關鍵字搜尋</strong>：主畫面搜尋欄支援同時比對品名、店內碼與國碼，以空白分隔多個關鍵字即可縮小範圍（例如輸入 <code>蜂蜜 卸妝</code>），並可搭配部門篩選。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="guide-item">
+          <summary>3. 待登錄清單管理</summary>
+          <div class="guide-body">
+            <ul>
+              <li>匯入時有效日期為 <code>0</code> 或空白的商品，會先歸類在「待登錄」分頁。</li>
+              <li>直接點選清單項目或以相機掃描即可登錄到期日，登錄後會自動依效期移至「即將過期」或「正常」。</li>
+              <li>若刪除某商品的效期紀錄，該商品會重新回到「待登錄」清單。</li>
+              <li>因應上萬筆商品資料，清單採分批載入（每次 300 筆），滑到底部可點擊「再載入」。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="guide-item">
+          <summary>4. 檔案匯入與匯出格式規範</summary>
+          <div class="guide-body">
+            <ul>
+              <li><strong>支援格式</strong>：匯入支援 <code>.xlsx</code>、<code>.xls</code>（Excel 97–2003）、<code>.csv</code>（自動判斷 UTF-8 與 Big5）；匯出支援 <code>.xlsx</code>（推薦）與 <code>.csv</code>。</li>
+              <li><strong>必要欄位名稱</strong>（第一列或 Excel 前 10 列內，順序不限）：<code>國碼</code>（或 <code>條碼</code>）、<code>部門</code>、<code>店內碼</code>、<code>品名</code>、<code>有效日期</code>，其餘多餘欄位會自動忽略。</li>
+              <li><strong>匯入保護機制</strong>：已有登錄到期日的商品，重新匯入檔案時會<strong>保留原本登錄的到期日</strong>不被覆蓋，僅更新品名、部門與店內碼。</li>
+              <li><strong>跨裝置轉移</strong>：主畫面右上角「⋮」→「匯出」產生的檔案，可直接匯入另一支手機接續使用。</li>
+            </ul>
+            <div class="tip-box">
+              ⚠️ <strong>Excel 編輯提醒</strong>：使用 Excel 存檔前，請務必將「國碼／條碼」欄位格式設為「文字」，避免長數字被轉為科學記號（如 <code>4.71E+12</code>）導致該列匯入失敗。
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Privacy & Security -->
+    <section class="block" id="privacy">
+      <h2 class="section-title">隱私與離線安全說明</h2>
+      <div class="privacy-card">
+        <strong>本 App 為純本機離線工具，不會收集或上傳你的商品與效期資料：</strong>
+        <ul>
+          <li>所有商品主檔與效期批次皆儲存於手機本機的 SQLite 資料庫（<code>expiry.db</code>），不需註冊帳號或登入。</li>
+          <li>不要求定位（GPS）、通訊錄、簡訊、通話紀錄等敏感權限；僅使用相機（掃描條碼）與通知（到期提醒）。</li>
+          <li>不含第三方廣告 SDK 或自訂遠端伺服器連線。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>效期提醒 App · Built with Flutter</span>
+      <span>
+        <a href="../index.html">返回首頁</a> ·
+        <a href="../starsand.html">星砂倖存者</a> ·
+        <a href="https://github.com/snow30093/expiry_app" target="_blank" rel="noopener">GitHub Repo</a>
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const copyBtn = document.getElementById('copyShaBtn');
+    const shaValue = document.getElementById('shaValue');
+    if (copyBtn && shaValue) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(shaValue.textContent.trim());
+          copyBtn.textContent = '已複製 ✓';
+          setTimeout(() => { copyBtn.textContent = '複製雜湊'; }, 2000);
+        } catch {
+          copyBtn.textContent = '請手動選取複製';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
